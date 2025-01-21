@@ -1,6 +1,7 @@
 import * as Types from '@cucumber/messages';
 import { IdGenerator } from '@cucumber/messages';
-export class GherkinDocumentUtil {
+import _ from "lodash";
+export class GherkinDocumentUtil{
 
     public static getUriFromGherkinDocument(gherkinDocument: Types.GherkinDocument): string {
         return gherkinDocument.uri as string;
@@ -13,14 +14,14 @@ export class GherkinDocumentUtil {
     public static genPickle( uri: string,name: string,language: string,
         astNodeIdsForSteps: string[][],types: Types.PickleStepType[], text: string[],
         tagNames: string[], astNodeIds: string[],
-        ids: string[]
+        ids: string[],stepArguments:Types.PickleStepArgument[]
     ): Types.Pickle {
         return {
             id: IdGenerator.uuid()(),
             uri: uri,//source.uri
             name: name,//scenario.name
             language: language, 
-            steps: this.genPickleSteps(astNodeIdsForSteps,types,text),// tablebody ids and step ids
+            steps: this.genPickleSteps(astNodeIdsForSteps,types,text,stepArguments),// tablebody ids and step ids
             tags: this.genPickleTags(tagNames,astNodeIds),// feature tags and scenario tags
             astNodeIds: this.genAstNodeIds(ids)// scenario id and step id
         }
@@ -34,10 +35,10 @@ export class GherkinDocumentUtil {
         return pickleTags;
     }
 
-    public static genPickleSteps(astNodeIds: string[][],types: Types.PickleStepType[], texts: string[]): Types.PickleStep[]{
+    public static genPickleSteps(astNodeIds: string[][],types: Types.PickleStepType[], texts: string[],stepArguments:Types.PickleStepArgument[]): Types.PickleStep[]{
         let pickleSteps: Types.PickleStep[] = [];
         for(let i = 0; i < astNodeIds.length; i++){
-            pickleSteps.push(this.genPickleStep(astNodeIds[i],types[i],texts[i]));
+            pickleSteps.push(this.genPickleStep(astNodeIds[i],types[i],texts[i],stepArguments[i]));
         }
         return pickleSteps;
     }
@@ -50,13 +51,24 @@ export class GherkinDocumentUtil {
     //    ACTION = "Action",//When
     //    OUTCOME = "Outcome"//Then
     //}
-    public static genPickleStep(astNodeIds: string[],type: Types.PickleStepType, text: string): Types.PickleStep{
-        return {
-            astNodeIds: astNodeIds,
-            id: IdGenerator.uuid()(),
-            type: type,
-            text: text
+    public static genPickleStep(astNodeIds: string[],type: Types.PickleStepType, text: string, argu?: Types.PickleStepArgument): Types.PickleStep{
+        if(_.isUndefined(argu)){
+            return {
+                astNodeIds: astNodeIds,
+                id: IdGenerator.uuid()(),
+                type: type,
+                text: text
+            }
+        }else{
+            return {
+                argument: argu,
+                astNodeIds: astNodeIds,
+                id: IdGenerator.uuid()(),
+                type: type,
+                text: text
+            }
         }
+        
     }
 
     public static genAstNodeIds(ids: string[]): string []{

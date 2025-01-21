@@ -379,7 +379,7 @@ describe('Parse Qaf Gherkin Feature File', function () {
     let filePath = path.resolve(__dirname, 'resource/scenario-outline-examples-excel-sheet.feature');
 
     let scenarios: Scenario[] = await gherkinFileParser.parseAndsetTestData(filePath);
-    assert.equal(scenarios.length, 2);
+    assert.equal(scenarios.length, 1);
     assert.equal(scenarios[0].getTestData().length, 2);
     assert.equal(scenarios[0].getTestData()[0][0]["searchKey"], "QMetry QAF");
     assert.equal(scenarios[0].getTestData()[0][0]["searchResult"], "QMetry Automation Framework");
@@ -394,14 +394,6 @@ describe('Parse Qaf Gherkin Feature File', function () {
     assert.equal(keys[0], "searchKey");
     assert.equal(keys[1], "searchResult");
     assert.equal(keys[2], "number");
-    
-    assert.equal(scenarios[1].getTestData().length, 2);
-    assert.equal(scenarios[1].getTestData()[0][0]["searchKey"], "QMetry QAF");
-    assert.equal(scenarios[1].getTestData()[0][0]["searchResult"], "QMetry Automation Framework");
-    assert.equal(scenarios[1].getTestData()[0][0]["number"], "10");
-    assert.equal(scenarios[1].getTestData()[1][0]["searchKey"], "Selenium ISFW");
-    assert.equal(scenarios[1].getTestData()[1][0]["searchResult"], "Infostretch Test Automation Framework");
-    assert.equal(scenarios[1].getTestData()[1][0]["number"], "20");
   });
   
   

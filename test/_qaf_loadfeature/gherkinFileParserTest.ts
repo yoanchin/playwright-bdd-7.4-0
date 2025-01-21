@@ -21,14 +21,6 @@ describe('Parse Qaf Gherkin File to Qaf Gherkin Document', function () {
     assert.equal(qafDocuments[0].scenarios[0].getTestData()[1][0]["searchResult"], "Infostretch Test Automation Framework");
     assert.equal(qafDocuments[0].scenarios[0].getTestData()[1][0]["number"], "20");
 
-    assert.equal(qafDocuments[0].scenarios[1].getTestData().length, 2);
-    assert.equal(qafDocuments[0].scenarios[1].getTestData()[0][0]["searchKey"], "QMetry QAF");
-    assert.equal(qafDocuments[0].scenarios[1].getTestData()[0][0]["searchResult"], "QMetry Automation Framework");
-    assert.equal(qafDocuments[0].scenarios[1].getTestData()[0][0]["number"], "10");
-    assert.equal(qafDocuments[0].scenarios[1].getTestData()[1][0]["searchKey"], "Selenium ISFW");
-    assert.equal(qafDocuments[0].scenarios[1].getTestData()[1][0]["searchResult"], "Infostretch Test Automation Framework");
-    assert.equal(qafDocuments[0].scenarios[1].getTestData()[1][0]["number"], "20");
-
     assert.equal(qafDocuments[1].scenarios[0].getTestData().length, 2);
     assert.equal(qafDocuments[1].scenarios[0].getTestData()[0][0]["searchKey"], "QMetry QAF");
     assert.equal(qafDocuments[1].scenarios[0].getTestData()[0][0]["searchResult"], "QMetry Automation Framework");

@@ -59,7 +59,8 @@ export class LodashUtil {
                     texts: string[] = [],
                     tagNames: string []= [], 
                     astNodeIds: string []= [],
-                    ids: string[] = [];
+                    ids: string[] = [],
+                    stepArguments:Types.PickleStepArgument[] = [];
                     //filter backgrounds and scenarios
                     const filteredBackgrounds = _.filter(obj['feature']?.['children'], 
                         (child) => child.background !== undefined
@@ -80,6 +81,9 @@ export class LodashUtil {
                                 astNodeIdsOfOneSteps_b = [step.id,tbody_id];
                             }
                             astNodeIdsForSteps.push(astNodeIdsOfOneSteps_b);
+                            //if step has argument, add it to stepArguments
+                            //else add undefined
+                            LodashUtil.addStepArguments(step, stepArguments);
                         })
                     });
                     const filteredScenarios = _.filter(obj['feature']?.['children'], 
@@ -99,6 +103,9 @@ export class LodashUtil {
                             astNodeIdsOfOneSteps = [step.id,tbody_id];
                         }
                         astNodeIdsForSteps.push(astNodeIdsOfOneSteps);
+                        //if step has argument, add it to stepArguments
+                        //else add undefined
+                        LodashUtil.addStepArguments(step, stepArguments);
                     });
                     // add tags of feature and scenario
                     _.forEach(obj['feature']?.['tags'],(item_tag_f,index_t) => {
@@ -110,7 +117,7 @@ export class LodashUtil {
                         tagNames.push(item_tag_s.name);
                         astNodeIds.push(item_tag_s.id);
                     });
-                    pickles.push(GherkinDocumentUtil.genPickle(uri,name,language,astNodeIdsForSteps,types,texts,tagNames,astNodeIds,ids));
+                    pickles.push(GherkinDocumentUtil.genPickle(uri,name,language,astNodeIdsForSteps,types,texts,tagNames,astNodeIds,ids,stepArguments));
                 })
             }
         })
@@ -135,7 +142,8 @@ export class LodashUtil {
                     texts: string[] = [],
                     tagNames: string []= [], 
                     astNodeIds: string []= [],
-                    ids: string[] = [];
+                    ids: string[] = [],
+                    stepArguments:Types.PickleStepArgument[] = [];
                     //filter backgrounds and scenarios
                     const filteredBackgrounds = _.filter(obj['feature']?.['children'], 
                         (child) => child.background !== undefined
@@ -156,6 +164,9 @@ export class LodashUtil {
                                 astNodeIdsOfOneSteps_b = [step.id,tbody_id];
                             }
                             astNodeIdsForSteps.push(astNodeIdsOfOneSteps_b);
+                            //if step has argument, add it to stepArguments
+                            //else add undefined
+                            LodashUtil.addStepArguments(step, stepArguments);
                         })
                     });
                     const filteredScenarios = _.filter(obj['feature']?.['children'], 
@@ -175,6 +186,9 @@ export class LodashUtil {
                             astNodeIdsOfOneSteps = [step.id,tbody_id];
                         }
                         astNodeIdsForSteps.push(astNodeIdsOfOneSteps);
+                        //if step has argument, add it to stepArguments
+                        //else add undefined
+                        LodashUtil.addStepArguments(step, stepArguments);
                     });
                     // add tags of feature and scenario
                     _.forEach(obj['feature']?.['tags'],(item_tag_f,index_t) => {
@@ -186,13 +200,23 @@ export class LodashUtil {
                         tagNames.push(item_tag_s.name);
                         astNodeIds.push(item_tag_s.id);
                     });
-                    pickles.push(GherkinDocumentUtil.genPickle(uri,name,language,astNodeIdsForSteps,types,texts,tagNames,astNodeIds,ids));
+                    pickles.push(GherkinDocumentUtil.genPickle(uri,name,language,astNodeIdsForSteps,types,texts,tagNames,astNodeIds,ids,stepArguments));
                 })
             }
         })
         return pickles;
     }
     
+    private static addStepArguments(step: Types.Step, stepArguments: Types.PickleStepArgument[]) {
+        let stepArgument: any = "";
+        if (step.dataTable) {
+            stepArgument = this.convertDatatabletoPickleTable(step.dataTable);
+        } else {
+            stepArgument = undefined;
+        }
+        stepArguments.push(stepArgument);
+    }
+
     public static replaceParamWithValue(original: string,values: any[]): {result:string,changed:boolean} {
         let changed = false;
         let matches = original.match(/<([^>]+)>/g) || [];
@@ -211,6 +235,27 @@ export class LodashUtil {
     
     public static convertParam(currLine: string): string {
         return currLine.replace(/>/g, '').replace(/</g, '');
+    }
+
+    public static convertDatatabletoPickleTable(dataTable: Types.DataTable): Types.PickleStepArgument {
+        let temprows:Types.PickleTableRow[] = []
+        _.forEach(dataTable.rows, (row) => {
+            let newCells:Types.PickleTableCell[] = [];
+            _.forEach(row.cells, (cell) => {
+                let newCell = _.omit(cell, 'location');
+                newCells.push(newCell);
+            })
+            temprows.push({
+                cells: newCells,
+            });
+        });
+        let pickleTable: Types.PickleStepArgument = {
+            dataTable: {
+                rows: temprows,
+            }
+            
+        };
+        return pickleTable;
     }
 
 }

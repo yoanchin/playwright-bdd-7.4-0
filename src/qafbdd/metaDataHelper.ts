@@ -31,7 +31,7 @@ export class MetaDataHelper {
         return false;
     }
 
-    public static getData(metadata: { [key: string]: any }): any[][] {
+    public static async getData(metadata: { [key: string]: any }): Promise<any[][]> {
 
         const query = metadata['sqlquery'];
         if (!StringUtil.isBlank(query)) {
@@ -58,9 +58,9 @@ export class MetaDataHelper {
             }
             if (file.endsWith('xlsx') || file.endsWith('xls')) {
                 if (!StringUtil.isBlank(key)) {
-                    return ExcelUtil.getTableDataAsMap(filePath, key, metadata['sheetName']);
+                    return await ExcelUtil.getTableDataAsMap(filePath, key, metadata['sheetName']);
                 }
-                return ExcelUtil.getExcelDataAsMap(filePath, metadata['sheetName']);
+                return await ExcelUtil.getExcelDataAsMap(filePath, metadata['sheetName']);
             }
             // csv, text
             const csvData = CVSUtil.getCSVDataAsMap(filePath);
@@ -73,7 +73,7 @@ export class MetaDataHelper {
         return [];
     }
     
-    public static getDataByCmd(metadata: { [key: string]: any }, cwd:string ): any[][] {
+    public static async getDataByCmd(metadata: { [key: string]: any }, cwd:string ): Promise<any[][]> {
         const query = metadata['sqlquery'];
         if (!StringUtil.isBlank(query)) {
             return DatabaseUtil.getRecordDataAsMap(query);
@@ -99,9 +99,9 @@ export class MetaDataHelper {
             }
             if (file.endsWith('xlsx') || file.endsWith('xls')) {
                 if (!StringUtil.isBlank(key)) {
-                    return ExcelUtil.getTableDataAsMap(filePath, key, metadata['sheetName']);
+                    return await ExcelUtil.getTableDataAsMap(filePath, key, metadata['sheetName']);
                 }
-                return ExcelUtil.getExcelDataAsMap(filePath, metadata['sheetName']);
+                return await ExcelUtil.getExcelDataAsMap(filePath, metadata['sheetName']);
             }
             // csv, text
             const csvData = CVSUtil.getCSVDataAsMap(filePath);

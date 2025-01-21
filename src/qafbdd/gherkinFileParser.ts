@@ -46,7 +46,7 @@ export class GherkinFileParser {
         for (const scenarioFile of scenarioFiles) {
             let scenarios: Scenario[] = await this.parse(scenarioFile);
             for (const scenario of scenarios) {
-                let data:any[][] = MetaDataHelper.getDataByCmd(scenario.getMetadata(),options["relativeTo"]);
+                let data:any[][] = await MetaDataHelper.getDataByCmd(scenario.getMetadata(),options["relativeTo"]);
                 scenario.setTestData(data);
             }
             qafDocs.push(new QafDocument(scenarios));
@@ -57,7 +57,7 @@ export class GherkinFileParser {
     public async parseAndsetTestData(scenarioFile: string): Promise<Scenario[]> {
         let scenarios: Scenario[] = await this.parse(scenarioFile);
         for (const scenario of scenarios) {
-            let data:any[][] = MetaDataHelper.getData(scenario.getMetadata());
+            let data:any[][] = await MetaDataHelper.getData(scenario.getMetadata());
             scenario.setTestData(data);
         }
         return scenarios;
